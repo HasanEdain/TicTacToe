@@ -12,7 +12,7 @@ under ~200 lines, every view its own file with `#Preview`s covering every state)
 the game rules and machine opponent have Swift Testing coverage, and the known
 logic bugs below are fixed. **Status:** open.
 
-**Done so far:** `.gitignore` added. New Game resets the tie flag (interim fix; `game-model` replaces it). Machine takes its own winning move before blocking (interim fix; `machine-move` replaces it). Dead `emptyCount() == 7` branch removed. "X won" preview uses its own board. Xcode recommended project settings applied (all targets on `$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)`). `TicTacToeUITests` target deleted.
+**Done so far:** `.gitignore` added. New Game resets the tie flag (interim fix; `game-model` replaces it). Machine takes its own winning move before blocking (interim fix; `machine-move` replaces it). Dead `emptyCount() == 7` branch removed. "X won" preview uses its own board. Xcode recommended project settings applied (all targets on `$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)`). `TicTacToeUITests` target deleted. Swift 6 language mode on all targets; app target defaults to `MainActor` isolation.
 
 ### Audit findings (what the leaves fix)
 
@@ -30,7 +30,6 @@ logic bugs below are fixed. **Status:** open.
 | Views | `BoardView` holds three views (board, game-over, logic) in one file; game logic lives in the view | `BoardView.swift` |
 | Previews | `PreviewProvider` instead of `#Preview`; no O-won state; mock state via `@State static` | all views |
 | Testing | XCTest template stubs only, including a `measure {}` perf stub (standard: no premature perf tests) | `TicTacToeTests` |
-| Project | Swift 5.0 language mode | `project.pbxproj` |
 | Repo | No `.gitignore`; `xcuserdata/` is tracked | repo root |
 
 Fine as-is: `TileState.swift`, `TicTacToeApp.swift`, one type per file. Colors
@@ -40,8 +39,7 @@ everything visible is a short UI label.
 ### Leaves
 
 - [ ] `untrack-xcuserdata` — `git rm --cached` the already-tracked `xcuserdata/` (`.gitignore` doesn't affect files already tracked).
-- [ ] `swift-language-mode` — **decision needed:** Swift 5 vs 6 language mode (currently `5.0`). Then apply it to all targets.
-- [ ] `swift-testing` — replace the XCTest stubs in `TicTacToeTests` with a Swift Testing suite; delete the `measure {}` stub.
+- [ ] `swift-testing` — replace the XCTest stubs in `TicTacToeTests` with a Swift Testing suite; delete the `measure {}` stub. The app's types are now `MainActor`-isolated, so suites that touch them are `@MainActor`.
 - [ ] `player-type` — introduce `Player` (`x`, `o`, with `opponent`) and make `TileState` `empty | occupied(Player)`; every `player:` parameter takes `Player`.
 - [ ] `board-position` — model the board as a fixed nine-cell type addressed by a position type (not a raw `Int`), so out-of-range indices and wrong-length boards can't be represented; named positions replace magic indices.
 - [ ] `board-logging` — add an OSLog `Logger` and log the remaining failure paths (e.g. moving onto an occupied cell).
