@@ -43,6 +43,7 @@ struct BoardView: View {
                 currentPlayer = .playerX
                 board.reset()
                 gameOver = false
+                tie = false
             }) {
                 Text("New Game")
                     .foregroundColor(.white)
@@ -129,7 +130,7 @@ struct BoardView_Previews: PreviewProvider {
                                         .playerO,.empty,.playerX]
     @State static var tieBoard = Board.init(tiles: tieTiles)
     @State static var twoBoard = Board.init(tiles: twoTiles)
-    @State static var xWinBoard = Board.init(tiles: twoTiles)
+    @State static var xWinBoard = Board.init(tiles: xWinTiles)
     
     @State static var playerX: TileState = .playerX
     

@@ -26,17 +26,20 @@ struct MachineMove {
     }
     
     static func heuristicMove(player: TileState, board: Board) -> Bool {
-        if board.emptyCount() == 7 {
-            return firstMoveHeuristic(player: player,board: board)
-        }
-        
         var opponentPlayer: TileState
         if player == .playerX {
             opponentPlayer = .playerO
         } else {
             opponentPlayer = .playerX
         }
-        
+
+        // Win before blocking. firstBlockIndex finds the empty cell that completes
+        // a line for the given player, so asking it about ourselves finds our win.
+        if let index = board.firstBlockIndex(player: player) {
+            board.move(player: player, index: index)
+            return true
+        }
+
         if let index = board.firstBlockIndex(player: opponentPlayer) {
             board.move(player: player, index: index)
             return true
